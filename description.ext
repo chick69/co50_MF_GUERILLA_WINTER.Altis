@@ -1,0 +1,311 @@
+respawn="BASE";
+respawnDelay=15;
+disabledAI=1;
+disableChannels[] = {{0,true,true},{1,true,true},{2,true,true}}; // 0 = global, 1 = side, 2 = command // new syntax: {{channel<number>, disableText<bool>, disableVoice<bool>}, ...};
+// side chat is disabled for indies in client\preInit.sqf
+joinUnassigned = 0;
+enableItemsDropping = 0;
+forceRotorLibSimulation = 0; // if you set this to 1, you deny freedom of choice to the players, which is the very principle this mission is built upon
+weaponPool = 0;
+corpseManagerMode = 1;
+corpseRemovalMinTime = 30*60;
+corpseRemovalMaxTime = 30*60;
+wreckManagerMode = 1;
+wreckRemovalMinTime = 5*60;
+wreckRemovalMaxTime = 10*60;
+enableDebugConsole = 1;
+respawnDialog = 0; // do not enable this, otherwise the default scoreboard will overlap with the new one
+onPauseScript = "client\clientEvents\onPause.sqf";
+class Header
+{
+	gameType=Sandbox;
+	minPlayers=1;
+	maxPlayers=52; // 50 players, 2 headless clients
+};
+author="MF Chick69 - MF Yanou"; // it would be great if you could keep "A3Wasteland.com" in the name, like "YourName and A3Wasteland.com" :)
+onLoadName = "GUERILLA Altis Winter MF V 2.0"; // it would be great if you could keep "A3" in the name, like "ABC A3Wasteland" instead of "ABC Wasteland" :)
+onLoadMission = "GUERILLA - Altis Winter Island";
+overviewText = "GUERILLA - Altis Winter Island";
+overviewTextLocked = "GUERILLA - Altis Winter Island";
+overviewPicture = "mapConfig\Loading.jpg";
+loadScreen = "mapConfig\Loading.jpg";
+briefing = 0; // if 0, skip Continue button
+
+#include "debugFlag.hpp"
+
+// A3W UI color (default = sky blue)
+
+#define A3W_UICOLOR_R  0.25 // default = 0.25
+#define A3W_UICOLOR_G  0.51 // default = 0.51
+#define A3W_UICOLOR_B  0.96 // default = 0.96
+
+//Dialog includes
+
+#include "client\gui_base.hpp"
+#include "addons\R3F_ARTY_AND_LOG\desc_include.h"
+#include "client\systems\ui_toolkit.hpp"
+#include "client\systems\common.hpp"
+#include "client\items\warchest\dialog.hpp"
+#include "client\items\atm\atm_gui.hpp"
+#include "client\actions\gui.hpp"
+#include "addons\far_revive\reviveBlank_gui.hpp"
+#include "client\systems\playerMenu\dialog\player_settings.hpp"
+#include "client\systems\groups\dialog\groupManagement.hpp"
+#include "client\systems\gunStore\dialog\gunshop_settings.hpp"
+#include "client\systems\generalStore\dialog\genstore_settings.hpp"
+#include "client\systems\vehicleStore\dialog\vehiclestore_settings.hpp"
+#include "client\systems\adminPanel\dialog\adminMenu.hpp"
+#include "client\systems\adminPanel\dialog\modMenu.hpp"
+#include "client\systems\adminPanel\dialog\serverAdminMenu.hpp"
+#include "client\systems\adminPanel\dialog\debugMenu.hpp"
+#include "client\systems\adminPanel\dialog\playerMenu.hpp"
+#include "client\systems\adminPanel\dialog\vehicleManagement.hpp"
+#include "client\systems\adminPanel\dialog\markerLog.hpp"
+#include "client\systems\adminPanel\dialog\objectSearch.hpp"
+#include "client\systems\playerMenu\dialog\respawn_dialog.hpp"
+#include "client\systems\playerMenu\dialog\teamkill_dialog.hpp"
+#include "client\systems\killFeed\killFeedMenu_gui.hpp"
+#include "addons\proving_ground\PG_config.hpp"
+#include "addons\outlw_magrepack\config.hpp"
+#include "addons\gui\gui.hpp"
+#include "addons\parking\list_simple_menu.hpp"
+#include "addons\CHVD\dialog.hpp"
+
+class RscTitles
+{
+	#include "addons\proving_ground\PG_rsctitles.hpp"
+	#include "addons\lsd_nvg\RscTitles.hpp"
+	#include "client\systems\hud\dialog\hud.hpp"
+	#include "client\systems\playerMenu\dialog\welcome.hpp"
+	#include "client\systems\scoreboard\score_gui.hpp"
+	#include "client\systems\killFeed\killFeed_gui.hpp"
+	#include "addons\far_revive\revive_gui.hpp"
+};
+
+class CfgFunctions
+{
+	class A3W
+	{
+		#include "client\CfgFunctions.hpp"
+		#include "server\CfgFunctions.hpp"
+	};
+
+	#include "addons\CHVD\CfgFunctions.hpp"
+};
+
+class CfgNotifications
+{
+	#include "client\CfgNotifications.hpp"
+};
+
+class CfgRemoteExec // applies only to clients
+{
+	class Functions
+	{
+		#ifndef A3W_DEBUG
+		mode = 1; // 0 = block all, 1 = whitelist, 2 = allow all
+		#else
+		mode = 2; // debug mode, don't touch
+		#endif
+
+		#include "client\CfgRemoteExec_fnc.hpp"
+	};
+	class Commands
+	{
+		#ifndef A3W_DEBUG
+		mode = 1; // 0 = block all, 1 = whitelist, 2 = allow all
+		#else
+		mode = 2; // debug mode, don't touch
+		#endif
+	};
+};
+
+class CfgSounds
+{
+	class bcg_wind
+	{
+		name = "bcg_wind";
+		sound[] = {"\sound\bcg_wind.ogg", 0.3, 1};
+		titles[] = {1, ""};
+	};
+	class bcg_wind_mild
+	{
+		name = "bcg_wind_mild";
+		sound[] = {"\sound\bcg_wind_mild.ogg", 0.05, 1};
+		titles[] = {1, ""};
+	};		
+	class rafala_1
+	{
+		name = "rafala_1";
+		sound[] = {"\sound\rafala_1.ogg", db+10, 1};
+		titles[] = {1, ""};
+	};	
+	class rafala_2
+	{
+		name = "rafala_2";
+		sound[] = {"\sound\rafala_2.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};	
+	class rafala_6
+	{
+		name = "rafala_6";
+		sound[] = {"\sound\rafala_6.ogg", db+15, 1};
+		titles[] = {1, ""};
+	};	
+	class rafala_7
+	{
+		name = "rafala_7";
+		sound[] = {"\sound\rafala_7.ogg", db+10, 1};
+		titles[] = {1, ""};
+	};	
+	class rafala_8
+	{
+		name = "rafala_8";
+		sound[] = {"\sound\rafala_8.ogg", db+15, 1};
+		titles[] = {1, ""};
+	};	
+	class rafala_9
+	{
+		name = "rafala_9";
+		sound[] = {"\sound\rafala_9.ogg", db+10, 1};
+		titles[] = {1, ""};
+	};
+	class tree_crack_1
+	{
+		name = "tree_crack_1";
+		sound[] = {"\sound\tree_crack_1.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};
+	class tree_crack_2
+	{
+		name = "tree_crack_2";
+		sound[] = {"\sound\tree_crack_2.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};
+	class tree_crack_3
+	{
+		name = "tree_crack_3";
+		sound[] = {"\sound\tree_crack_3.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};	
+	class tree_crack_4
+	{
+		name = "tree_crack_4";
+		sound[] = {"\sound\tree_crack_4.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};
+	class tree_crack_5
+	{
+		name = "tree_crack_5";
+		sound[] = {"\sound\tree_crack_5.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};
+	class tree_crack_6
+	{
+		name = "tree_crack_6";
+		sound[] = {"\sound\tree_crack_6.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};	
+	class tree_crack_7
+	{
+		name = "tree_crack_7";
+		sound[] = {"\sound\tree_crack_7.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};	
+	class tree_crack_8
+	{
+		name = "tree_crack_8";
+		sound[] = {"\sound\tree_crack_8.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};	
+	class tree_crack_9
+	{
+		name = "tree_crack_9";
+		sound[] = {"\sound\tree_crack_9.ogg", db+5, 1};
+		titles[] = {1, ""};
+	};
+	class lup_01
+	{
+		name = "lup_01";
+		sound[] = {"\sound\lup_01.ogg", 1, 1};
+		titles[] = {};
+	};
+	class lup_02
+	{
+		name = "lup_02";
+		sound[] = {"\sound\lup_02.ogg", 1, 1};
+		titles[] = {};
+	};
+	class lup_03
+	{
+		name = "lup_03";
+		sound[] = {"\sound\lup_03.ogg", 1, 1};
+		titles[] = {};
+	};
+	class tremurat_1
+	{
+		name = "tremurat_1";
+		sound[] = {"\sound\tremurat_1.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tremurat_2
+	{
+		name = "tremurat_2";
+		sound[] = {"\sound\tremurat_2.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tremurat_3
+	{
+		name = "tremurat_3";
+		sound[] = {"\sound\tremurat_3.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tremurat_4
+	{
+		name = "tremurat_4";
+		sound[] = {"\sound\tremurat_4.ogg", 1, 1};
+		titles[] = {1, ""};
+	};	
+	class NoSound 
+	{
+		name = "NoSound";
+		sound[] = {"", 0, 1};
+		titles[] = {0, ""};
+	};	
+	class tuse_1
+	{
+		name = "tuse_1";
+		sound[] = {"\sound\tuse_1.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tuse_2
+	{
+		name = "tuse_2";
+		sound[] = {"\sound\tuse_2.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tuse_3
+	{
+		name = "tuse_3";
+		sound[] = {"\sound\tuse_3.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tuse_4
+	{
+		name = "tuse_4";
+		sound[] = {"\sound\tuse_4.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tuse_5
+	{
+		name = "tuse_5";
+		sound[] = {"\sound\tuse_5.ogg", 1, 1};
+		titles[] = {1, ""};
+	};
+	class tuse_6
+	{
+		name = "tuse_6";
+		sound[] = {"\sound\tuse_6.ogg", 1, 1};
+		titles[] = {1, ""};
+	};	
+};
